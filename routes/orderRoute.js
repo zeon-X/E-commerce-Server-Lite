@@ -50,10 +50,6 @@ router.get('/delete', verifyTokenAndAdmin, async (req, res) => {
 //GET BY ID // it will take user id
 router.get('/find', verifyTokenAndAuthorization, async (req, res) => {
 
-    // const userId = mongoose.Schema.Types.ObjectId(req.user.id);
-    // console.log(userId)
-
-
     try {
         const Orders = await Order.find({ userId: req.user.id }).populate('products.productId');
         res.status(200).json(Orders);
@@ -61,16 +57,6 @@ router.get('/find', verifyTokenAndAuthorization, async (req, res) => {
     catch (err) {
         res.status(500).json({ "error": err })
     }
-
-
-    // Order.find({ userId: userId }).exec((err, data) => {
-    //     if (data) {
-    //         res.status(200).json(data);
-    //     } else {
-    //         res.status(500).json(err);
-    //     }
-    // })
-
 
 })
 

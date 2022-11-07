@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.token;
-
+  const authHeader = req.headers.authorization;
+  console.log(req.headers.authorization);
   if (authHeader) {
     const token = authHeader.split(" ")[1];
 
@@ -18,14 +18,17 @@ const verifyToken = (req, res, next) => {
       }
     });
   } else {
-    return res.status(401).json("u r not authenticated");
+    return res.status(401).json("u r not authenticated sir");
   }
 };
 
 const verifyTokenAndAuthorization = (req, res, next) => {
   verifyToken(req, res, () => {
     // console.log(req.query)
-    if (req.user.id === req.query.id || req.user.isAdmin) {
+    if (
+      req.user.id === req.query.id ||
+      req.user.email === "mdshefatzeon@gmail.com"
+    ) {
       next();
     } else {
       res.status(403).json("u r not allowed");
@@ -35,7 +38,7 @@ const verifyTokenAndAuthorization = (req, res, next) => {
 
 const verifyTokenAndAdmin = (req, res, next) => {
   verifyToken(req, res, () => {
-    if (req.user.isAdmin) {
+    if (req.user.email === "mdshefatzeon@gmail.com") {
       next();
     } else {
       res.status(403).json("u r not allowed to do that");

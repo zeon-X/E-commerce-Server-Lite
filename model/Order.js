@@ -25,6 +25,10 @@ const OrderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    receiverName: {
+      type: String,
+      required: true,
+    },
     address: {
       type: Object,
       reuired: true,

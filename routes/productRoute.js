@@ -35,7 +35,7 @@ router.put("/update", verifyTokenAndAdmin, async (req, res) => {
 });
 
 //DELETE
-router.get("/delete", verifyTokenAndAdmin, async (req, res) => {
+router.delete("/delete", verifyTokenAndAdmin, async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.query.id);
     res.status(200).json("product has been deleted..");
@@ -57,29 +57,22 @@ router.get("/find", async (req, res) => {
 //GET ALL Products
 router.get("/allProducts", async (req, res) => {
   const page = req.query.page || 0;
-  const qNew = req.query.new === "true";
+  const perPage = req.query.per_page || 20;
+
   const qCategory = req.query.category;
   const qSearch = req.query.search_query;
+
   try {
     let products;
-
-    if (qNew && qCategory) {
+    if (qCategory) {
       products = await Product.find({
         categories: {
           $in: [qCategory],
         },
-      }).sort({ createdAt: -1 });
-
-      // .skip(page * 20).limit(20);
-    } else if (qNew) {
-      products = await Product.find().sort({ createdAt: -1 });
-      // .skip(page * 20).limit(20);
-    } else if (qCategory) {
-      products = await Product.find({
-        categories: {
-          $in: [qCategory],
-        },
-      });
+      })
+        .sort({ createdAt: -1 })
+        .skip(page * perPage)
+        .limit(perPage);
     } else if (qSearch) {
       // console.log("searching for " + qSearch);
       products = await Product.find({
@@ -87,14 +80,16 @@ router.get("/allProducts", async (req, res) => {
           $regex: qSearch,
           $options: "i",
         },
-      });
-
-      // .skip(page * 20).limit(20);
+      })
+        .sort({ createdAt: -1 })
+        .skip(page * perPage)
+        .limit(perPage);
     } else {
-      products = await Product.find();
-      // .skip(page * 20).limit(20);
+      products = await Product.find()
+        .sort({ createdAt: -1 })
+        .skip(page * perPage)
+        .limit(perPage);
     }
-
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json(err);
